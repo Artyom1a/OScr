@@ -16,18 +16,15 @@ namespace ConsoleApp1.Services
         private readonly string ConnectionString = "server=localhost;database=SCRIPTSDB;uid=root;password=reghjjh236H;";
         string mypath = "C:\\Code Main\\Scripts1_2803\\ConsoleApp1\\Scripts";
         private readonly ISQLFileRepository<MySqlConnection> m_Repository;
-        SQLFileService sQLFileService = new SQLFileService();
         public SQLFileService(ISQLFileRepository<MySqlConnection> repository)
         {
             m_Repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
-        public SQLFileService()
-        {
-        }
+
 
         public void RunSQLScripts(MySqlConnection connection)
         {
-            SearchScriptsUnrealizedStatus(NameFileOfDirectory(sQLFileService.Connection()), m_Repository.GetDocs(sQLFileService.Connection()));
+            SearchScriptsUnrealizedStatus(connection, NameFileOfDirectory(connection), m_Repository.GetDocs(connection));
         }
 
 
@@ -45,7 +42,7 @@ namespace ConsoleApp1.Services
 
 
 
-        //++ забрал себе в класс service метод выполнения allcode
+        // метод выполнения allcode
         private void FileAllCodeRealized(MySqlConnection connection, string text)
         {
             if (text == null) throw new ArgumentNullException(nameof(text));
@@ -65,30 +62,25 @@ namespace ConsoleApp1.Services
                 connection.Close();
             }
         }
-        //++ забрал себе в класс service метод выполнения allcode
+        
 
 
-
-
-
-        //++ забрал себе в класс service  метод считывания файла(скрипта)
+        // метод считывания файла(скрипта)
         public void OpenFile(MySqlConnection connection, string pathfile)
         {
             string[] AllCode = File.ReadAllText(mypath + "\\" + pathfile).Split(';');
 
             for (int i = 0; i < AllCode.Length; i++)
             {
-                FileAllCodeRealized(sQLFileService.Connection(), AllCode[i]);
+                FileAllCodeRealized(connection, AllCode[i]);
             }
         }
-
-        //++ забрал себе в класс service  метод считывания файла(скрипта)
 
 
 
   
         //вычитаем файлы из папки и те, что есть в бд
-        public void SearchScriptsUnrealizedStatus(List<string> files, List<DOC> docs)
+        public void SearchScriptsUnrealizedStatus(MySqlConnection connection, List<string> files, List<DOC> docs)
         {
             var untrackedFilesName = files.Except(docs.Select(x => x.NAME)).ToList();
             //  var untrackedFilesStatus = files.Except(docs.Select(x => x.STATUS)).ToList();
@@ -98,10 +90,10 @@ namespace ConsoleApp1.Services
                 if (!docs[i].NAME.Contains(untrackedFilesName[i]))
                 {
 
-                    OpenFile(sQLFileService.Connection(), untrackedFilesName[i]);
+                    OpenFile(connection, untrackedFilesName[i]);
                     Console.WriteLine(untrackedFilesName[i]);
                     DOC docnew = new DOC(untrackedFilesName[i], "REALIZED");
-                    m_Repository.Add(sQLFileService.Connection(),docnew); //несколько файлов, нужно прописать логику
+                    m_Repository.Add(connection, docnew); //несколько файлов, нужно прописать логику
 
                 }
 

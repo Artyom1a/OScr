@@ -15,39 +15,18 @@ namespace CsSqlSearchscripts
     {
         public static void Main(string[] args)
         {
-            //DB query = new DB();
-            //DOC doc = new DOC() { NAME = "Doc2", STATUS = "UNREALIZED" };
-            //Console.WriteLine(query.Add(doc));
-            //Console.ReadKey();
+            /*SQLFileRepository repository = new SQLFileRepository();
+             List<DOC> docs = new List<DOC>()
+         {
+            new DOC("1","unrealized")
+          };
+         repository.AddRange(repository.Connection(), docs);
+               repository.GetDocs(repository.Connection());*/
 
-
-
-            //List<DOC> docs = query.GetDocs();
-            //for (int i = 0; i < docs.Count; i++)
-            //{
-            //    doc = docs[i];
-            //    Console.WriteLine(doc);
-            //}
-
-            //DB db = new DB();
-            //db.Service();
-
-
-
-
-            //SQLFileRepository repository = new SQLFileRepository();
-            //List<DOC> docs = new List<DOC>()
-            //{
-            //    new DOC("1","unrealized")
-            //    };
-            //repository.AddRange(repository.Connection(), docs);
-
-
-            //repository.GetDocs(repository.Connection());
-
-
-            SQLFileService service = new SQLFileService(); //должно это остаться 
+            SQLFileService service = new SQLFileService(new SQLFileRepository()); 
             service.RunSQLScripts(service.Connection());
+
+
         }
 
 
